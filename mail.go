@@ -1,4 +1,4 @@
-package tools
+package goTools
 
 import (
 	"net/smtp"
