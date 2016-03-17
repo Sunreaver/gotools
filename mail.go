@@ -1,3 +1,5 @@
+// Package goTools 一些golang小功能包
+//
 package goTools
 
 import (
@@ -5,6 +7,12 @@ import (
 	"time"
 )
 
+// SendMail 发送邮件
+//
+// body 发送内容
+//
+// to 接收者列表
+//
 func SendMail(body string, to []string) error {
 	// Set up authentication information.
 	f := "13164955841@163.com"
