@@ -22,7 +22,7 @@ func MakeGoogleAuthenticator(key string, t int64) (string, error) {
 	if hs == nil {
 		return "", errors.New("输入有误")
 	}
-	snum := dt(hs)
+	snum := lastBit4byte(hs)
 	fmt.Println("snum = ", snum)
 	d := snum % 1000000
 	return fmt.Sprintf("%06d", d), nil
@@ -33,7 +33,7 @@ func MakeGoogleAuthenticatorForNow(key string) (string, error) {
 	return MakeGoogleAuthenticator(key, time.Now().Unix())
 }
 
-func dt(hmacSha1 []byte) int32 {
+func lastBit4byte(hmacSha1 []byte) int32 {
 	if len(hmacSha1) != sha1.Size {
 		return 0
 	}
