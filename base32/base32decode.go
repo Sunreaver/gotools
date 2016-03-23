@@ -1,3 +1,6 @@
+// Package base32 google两步验证中用到的basedecode
+//
+
 package base32
 
 import "strings"

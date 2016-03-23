@@ -1,4 +1,7 @@
-package goTools
+// Package system 系统相关功能
+//
+
+package system
 
 import (
 	"os"
@@ -32,7 +35,7 @@ func IsDirExists(path string) bool {
 	if err != nil {
 		return os.IsExist(err)
 	}
-    return fi.IsDir()
+	return fi.IsDir()
 }
 
 // IsFileExists 判断文件是否存在

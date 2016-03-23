@@ -1,6 +1,7 @@
-// Package goTools 一些golang小功能包
+// Package mail 邮件相关功能
 //
-package goTools
+
+package mail
 
 import (
 	"net/smtp"
