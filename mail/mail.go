@@ -4,9 +4,17 @@
 package mail
 
 import (
+	"encoding/json"
+	"io/ioutil"
 	"net/smtp"
 	"time"
 )
+
+type AuthConfig struct {
+	Mail string `json:"username"`
+	Pwd  string `json:"password"`
+	Smtp string `json:"smtp"`
+}
 
 // SendMail 发送邮件
 //
@@ -15,13 +23,22 @@ import (
 // to 接收者列表
 //
 func SendMail(body string, to []string) error {
+
+	d, e := ioutil.ReadFile("auth.json")
+	if e != nil {
+		return e
+	}
+	var cfg Auth
+	e = json.Unmarshal(d, &cfg)
+	if e != nil {
+		return e
+	}
 	// Set up authentication information.
-	f := "13164955841@163.com"
-	host := "smtp.163.com"
-	auth := smtp.PlainAuth("", f, "plck965xlm", host)
-	err := smtp.SendMail(host+":25", auth, f, to, []byte("To: "+to[0]+"\r\n"+
-		"From: "+f+"\r\n"+
-		"Subject: 行情播报,每日一暴"+time.Now().Format("2006-01-02\r\n")+
-		"\r\n"+body))
+	auth := smtp.PlainAuth("", cfg.Mail, cfg.Pwd, cfg.Smtp)
+	err := smtp.SendMail(cfg.Smtp+":25", auth, cfg.Mail, to,
+		[]byte("To: "+to[0]+"\r\n"+
+			"From: "+"每日一报<"+cfg.Mail+">\r\n"+
+			"Subject: 行情播报,每日一暴"+time.Now().Format("2006-01-02\r\n")+
+			"\r\n"+body))
 	return err
 }
