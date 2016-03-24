@@ -11,7 +11,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/sunreaver/goTools/base32"
+	b32 "github.com/sunreaver/goTools/base32"
 )
 
 // MakeAuth 获取key&t对应的验证码
@@ -43,7 +43,11 @@ func dt(hmacSha1 []byte) int32 {
 }
 
 func hmacSha1(key string, t int64) []byte {
-	decodeKey := base32.Decode(key)
+	decodeKey := b32.Decode(key)
+	// fmt.Println(decodeKey)
+	// de, _ := base32.StdEncoding.DecodeString(key)
+	// fmt.Println(de)
+
 	cData := make([]byte, 8)
 	binary.BigEndian.PutUint64(cData, uint64(t))
 
