@@ -10,6 +10,8 @@ import (
 	"time"
 )
 
+// AuthConfig 默认读取
+// ./auth.json => AuthConfig
 type AuthConfig struct {
 	Mail string `json:"username"`
 	Pwd  string `json:"password"`
@@ -28,7 +30,7 @@ func SendMail(body string, to []string) error {
 	if e != nil {
 		return e
 	}
-	var cfg Auth
+	var cfg AuthConfig
 	e = json.Unmarshal(d, &cfg)
 	if e != nil {
 		return e
