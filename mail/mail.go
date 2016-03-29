@@ -24,9 +24,9 @@ type AuthConfig struct {
 //
 // to 接收者列表
 //
-func SendMail(body string, to []string) error {
+func SendMail(authFile, body string, to []string) error {
 
-	d, e := ioutil.ReadFile("auth.json")
+	d, e := ioutil.ReadFile(authFile)
 	if e != nil {
 		return e
 	}
