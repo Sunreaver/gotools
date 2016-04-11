@@ -1,6 +1,5 @@
 // Package mail 邮件相关功能
 //
-
 package mail
 
 import (
@@ -15,7 +14,7 @@ import (
 type AuthConfig struct {
 	Mail string `json:"username"`
 	Pwd  string `json:"password"`
-	Smtp string `json:"smtp"`
+	SMTP string `json:"smtp"`
 }
 
 // SendMail 发送邮件
@@ -36,8 +35,8 @@ func SendMail(authFile, body string, to []string) error {
 		return e
 	}
 	// Set up authentication information.
-	auth := smtp.PlainAuth("", cfg.Mail, cfg.Pwd, cfg.Smtp)
-	err := smtp.SendMail(cfg.Smtp+":25", auth, cfg.Mail, to,
+	auth := smtp.PlainAuth("", cfg.Mail, cfg.Pwd, cfg.SMTP)
+	err := smtp.SendMail(cfg.SMTP+":25", auth, cfg.Mail, to,
 		[]byte("To: "+to[0]+"\r\n"+
 			"From: "+"每日一报<"+cfg.Mail+">\r\n"+
 			"Subject: 行情播报,每日一暴"+time.Now().Format("2006-01-02\r\n")+
