@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/smtp"
-	"time"
 )
 
 // AuthConfig 默认读取
@@ -23,7 +22,7 @@ type AuthConfig struct {
 //
 // to 接收者列表
 //
-func SendMail(authFile, body string, to []string) error {
+func SendMail(authFile, body, from, subject string, to []string) error {
 
 	d, e := ioutil.ReadFile(authFile)
 	if e != nil {
@@ -38,8 +37,8 @@ func SendMail(authFile, body string, to []string) error {
 	auth := smtp.PlainAuth("", cfg.Mail, cfg.Pwd, cfg.SMTP)
 	err := smtp.SendMail(cfg.SMTP+":25", auth, cfg.Mail, to,
 		[]byte("To: "+to[0]+"\r\n"+
-			"From: "+"每日一报<"+cfg.Mail+">\r\n"+
-			"Subject: 行情播报,每日一暴"+time.Now().Format("2006-01-02\r\n")+
+			"From: "+from+"<"+cfg.Mail+">\r\n"+
+			"Subject: "+subject+
 			"\r\n"+body))
 	return err
 }
