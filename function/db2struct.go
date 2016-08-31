@@ -35,9 +35,11 @@ func main() {
 	var dbhost string
 	var dbport int
 	var dburl string
+	var dbname string
 	flag.StringVar(&dbhost, "s", "127.0.0.1", "mongo所在host")
 	flag.IntVar(&dbport, "p", 27017, "mongo端口")
 	flag.StringVar(&dburl, "u", "", "host:port")
+	flag.StringVar(&dbname, "db", "", "dbName")
 	flag.Parse()
 
 	if len(dburl) > 0 {
@@ -49,12 +51,16 @@ func main() {
 	mongo := session.Clone()
 	defer mongo.Close()
 
-	dbs, err := mongo.DatabaseNames()
-	if err != nil {
-		panic("Find DBS Err:" + err.Error())
-	}
-	for _, db := range dbs {
-		doDataBase(db)
+	if len(dbname) > 0 {
+		doDataBase(dbname)
+	} else {
+		dbs, err := mongo.DatabaseNames()
+		if err != nil {
+			panic("Find DBS Err:" + err.Error())
+		}
+		for _, db := range dbs {
+			doDataBase(db)
+		}
 	}
 }
 
@@ -149,5 +155,5 @@ func parse(query map[string]DBOut, structName string) (string, error) {
 	if err := t.Execute(&doc, query); err != nil {
 		return "", err
 	}
-	return fmt.Sprintf("type %s struct%s", structName, doc.String()), nil
+	return fmt.Sprintf("type %s struct %s", structName, doc.String()), nil
 }
