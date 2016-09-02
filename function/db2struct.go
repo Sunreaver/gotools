@@ -73,6 +73,9 @@ func doDataBase(dbName string) {
 		return
 	}
 	for _, c := range cs {
+		if strings.HasPrefix(c, "system.") {
+			continue
+		}
 		doCollection(dbName, c)
 	}
 }
