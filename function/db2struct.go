@@ -92,7 +92,11 @@ func doCollection(dbName, collection string) {
 		makeQueryKeyAndType(resultMap, query)
 	}
 
-	structString, _ := parse(resultMap, collection)
+	c := strings.ToUpper(collection[0:1])
+	if len(collection) > 1 {
+		c += collection[1:]
+	}
+	structString, _ := parse(resultMap, c)
 	fmt.Println(structString)
 }
 
@@ -102,6 +106,9 @@ func makeQueryKeyAndType(result map[string]DBOut, query map[string]interface{}) 
 	for key, bsonValue := range query {
 		hadExist[key] = true
 		typeString := strings.Replace(fmt.Sprintf("%T", bsonValue), " ", "", -1)
+		if typeString == "<nil>" {
+			continue
+		}
 
 		if _, ok := result[key]; ok {
 			//存在
