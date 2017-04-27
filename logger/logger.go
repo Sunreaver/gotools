@@ -1,9 +1,8 @@
-package utils
+package logger
 
 import (
 	"os"
 	"path/filepath"
-	"runtime"
 	"time"
 
 	"github.com/spf13/viper"
@@ -17,13 +16,7 @@ var Logger zap.Logger
 func init() {
 	viper.AutomaticEnv()
 	viper.SetDefault("DEBUG", "0")
-	viper.SetDefault("LOGFILE", "0")
-
-	if runtime.GOOS == "linux" {
-		viper.SetDefault("LOGPATH", "/mnt/log")
-	} else {
-		viper.SetDefault("LOGPATH", system.CurPath())
-	}
+	viper.SetDefault("LOGPATH", system.CurPath())
 	opts := getOptions()
 	Logger = zap.New(zap.NewJSONEncoder(zap.RFC3339Formatter("time")), opts...)
 
@@ -54,9 +47,7 @@ func getOptions() []zap.Option {
 	} else {
 		opts = append(opts, zap.InfoLevel)
 	}
-	if viper.GetString("LOGFILE") != "0" {
-		f := getFile()
-		opts = append(opts, zap.Output(f))
-	}
+	f := getFile()
+	opts = append(opts, zap.Output(f))
 	return opts
 }

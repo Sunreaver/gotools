@@ -1,2 +1,3 @@
 auth.json
 main.go
+*.log
