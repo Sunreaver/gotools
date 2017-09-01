@@ -37,7 +37,7 @@ var (
 // InitLogger 初始化
 // path 输出路径
 // debugLevel 是否输出debug信息
-// location 日志文件名所属时区/默认东八区
+// location 日志文件名所属时区
 func InitLogger(path string, debugLevel bool, location *time.Location) {
 	directory = path
 	if debugLevel {
@@ -47,10 +47,9 @@ func InitLogger(path string, debugLevel bool, location *time.Location) {
 	}
 	//Fix time offset for Local
 	// lt := time.FixedZone("Asia/Shanghai", 8*60*60)
-	if location == nil {
-		location = time.FixedZone("Asia/Shanghai", 8*60*60)
+	if location != nil {
+		time.Local = location
 	}
-	time.Local = location
 
 	Logger = GetLogger(time.Now().Format("2006-01-02"))
 
@@ -87,6 +86,7 @@ func (l *loggerMap) Get(name string) *zap.SugaredLogger {
 		if !ok {
 			writer := &lumberjack.Logger{
 				Filename: path.Join(directory, name+".log"),
+				MaxSize:  1024,
 			}
 			ws := zapcore.AddSync(writer)
 			cfg := zapcore.EncoderConfig{
