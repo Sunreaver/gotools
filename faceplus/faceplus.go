@@ -63,7 +63,19 @@ type Verification struct {
 
 // Process will Process
 func Process(file, name string, age int, v *Verification) (noNeed bool, reason string) {
-	re, e := postFile(file, name, "https://api-cn.faceplusplus.com/facepp/v3/detect", v)
+	//打开文件句柄操作
+	fh, err := os.Open(file)
+	if err != nil {
+		return true, "opening file"
+	}
+	defer fh.Close()
+
+	return ProcessWithData(name, fh, age, v)
+}
+
+// ProcessWithData will ProcessWithData
+func ProcessWithData(name string, fileData io.Reader, age int, v *Verification) (noNeed bool, reason string) {
+	re, e := postData(name, "https://api-cn.faceplusplus.com/facepp/v3/detect", fileData, v)
 	if e != nil {
 		return false, e.Error()
 	}
@@ -103,9 +115,12 @@ func Process(file, name string, age int, v *Verification) (noNeed bool, reason s
 	return
 }
 
-func postFile(filename, name, uri string, v *Verification) (result *Result, err error) {
+func postData(name, uri string, fileData io.Reader, v *Verification) (result *Result, err error) {
+
 	if v == nil {
 		return nil, errors.New("no verification")
+	} else if fileData == nil {
+		return nil, errors.New("no data")
 	}
 	defer func() {
 		recover()
@@ -126,16 +141,9 @@ func postFile(filename, name, uri string, v *Verification) (result *Result, err 
 		fmt.Println("error writing to buffer")
 		return nil, err
 	}
-	//打开文件句柄操作
-	fh, err := os.Open(filename)
-	if err != nil {
-		fmt.Println("error opening file")
-		return nil, err
-	}
-	defer fh.Close()
 
 	//iocopy
-	_, err = io.Copy(fileWriter, fh)
+	_, err = io.Copy(fileWriter, fileData)
 	if err != nil {
 		return nil, err
 	}
