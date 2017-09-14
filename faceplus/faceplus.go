@@ -151,6 +151,7 @@ func postFile(filename, name, uri string, v *Verification) (result *Result, err 
 		return nil, err
 	}
 
+	result = &Result{}
 	if e := json.Unmarshal(respBody, result); e != nil {
 		return nil, errors.New("接口返回错误")
 	} else if result.Err != "" {
