@@ -80,10 +80,8 @@ func ProcessWithData(name string, fileData io.Reader, age int, v *Verification) 
 		return false, e.Error()
 	}
 
-	weights := 0.0
-	if len(re.Faces) != 1 {
-		weights = -100.0
-	} else if face := re.Faces[0]; face.Token != "" {
+	weights := -0.000001
+	for _, face := range re.Faces {
 		if face.Attribute.Gender.Value == "Male" {
 			reason += fmt.Sprint("男性")
 			weights -= 0.8
