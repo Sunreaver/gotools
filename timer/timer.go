@@ -4,9 +4,6 @@ import (
 	"time"
 )
 
-// CallBackType CallBack
-type CallBackType func(e interface{})
-
 // Timer Timer
 type Timer struct {
 	Second TimeWheel
