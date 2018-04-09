@@ -6,6 +6,9 @@ var (
 	publicTimer *Timer
 )
 
+// CallBackType CallBack
+type CallBackType func(e interface{})
+
 // PutTimer 启动Timer
 func PutTimer(second uint, repeat bool, id uint64, e interface{}, callBack CallBackType) {
 	RemoveTimer(id)
