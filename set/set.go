@@ -1,18 +1,19 @@
 package set
 
+// Set define Set
 type Set interface {
-	Add(e interface{}) bool
-	AddArray(e []interface{}) []interface{}
-	Remove(e interface{})
-	Clear()
-	Contains(e interface{}) bool
+	Add(e interface{}) (added bool)
+	AddArray(e ...interface{}) (addedKeys []interface{})
+	Remove(e interface{}) (exist bool)
+	Clear() (keys []interface{})
+	Contains(e interface{}) (exist bool)
 	Len() int
 	Same(other Set) bool
 	Elements() []interface{}
 	String() string
 }
 
-// 判断集合 one 是否是集合 other 的超集
+// IsSuperset 判断集合 one 是否是集合 other 的超集
 func IsSuperset(one Set, other Set) bool {
 	if one == nil || other == nil {
 		return false
@@ -33,7 +34,7 @@ func IsSuperset(one Set, other Set) bool {
 	return true
 }
 
-// 生成集合 one 和集合 other 的并集
+// Union 生成集合 one 和集合 other 的并集
 func Union(one Set, other Set) Set {
 	if one == nil || other == nil {
 		return nil
@@ -51,7 +52,7 @@ func Union(one Set, other Set) Set {
 	return unionedSet
 }
 
-// 生成集合 one 和集合 other 的交集
+// Intersect 生成集合 one 和集合 other 的交集
 func Intersect(one Set, other Set) Set {
 	if one == nil || other == nil {
 		return nil
@@ -76,7 +77,7 @@ func Intersect(one Set, other Set) Set {
 	return intersectedSet
 }
 
-// 生成集合 one 对集合 other 的差集
+// Difference 生成集合 one 对集合 other 的差集
 func Difference(one Set, other Set) Set {
 	if one == nil || other == nil {
 		return nil
@@ -96,7 +97,7 @@ func Difference(one Set, other Set) Set {
 	return differencedSet
 }
 
-// 生成集合 one 和集合 other 的对称差集
+// SymmetricDifference 生成集合 one 和集合 other 的对称差集
 func SymmetricDifference(one Set, other Set) Set {
 	if one == nil || other == nil {
 		return nil
@@ -109,11 +110,13 @@ func SymmetricDifference(one Set, other Set) Set {
 	return Union(diffA, diffB)
 }
 
+// NewSimpleSet will 生成新set
 func NewSimpleSet() Set {
 	hash := newHashSet()
-	return &hash
+	return hash
 }
 
+// IsSet will 判断是否为Set
 func IsSet(value interface{}) bool {
 	if _, ok := value.(Set); ok {
 		return true
