@@ -5,13 +5,6 @@ import mgo "gopkg.in/mgo.v2"
 // CloseSessionFunc 关闭sess Func
 type CloseSessionFunc func()
 
-// Configer Configer
-type Configer interface {
-	GetDBName() string
-	GetCollectionName() string
-	GetSocketTimeoutSecond() int
-}
-
 // MgoExamples mongo实例
 type MgoExamples interface {
 	GetCollection(config Configer) (*mgo.Collection, CloseSessionFunc)
