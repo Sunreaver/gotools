@@ -1,5 +1,3 @@
-// Package googleauth google两步验证6位验证码生成
-//
 package googleauth
 
 import (
