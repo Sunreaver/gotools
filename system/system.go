@@ -17,8 +17,8 @@ func CurPath() (path string) {
 	return filepath.Dir(pt)
 }
 
-// SystemSep 获取系统分隔符
-func SystemSep() (path string) {
+// Sep 获取系统分隔符
+func Sep() (path string) {
 
 	if os.IsPathSeparator('\\') { //前边的判断是否是系统的分隔符
 		path = "\\"
