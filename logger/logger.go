@@ -29,17 +29,18 @@ func InitLogger(path string, l Level, location *time.Location) error {
 	LoggerByDay = GetLogger(lastFile)
 	go func() {
 		for {
-			if lastFile != time.Now().Format(loggerByDayFormat) {
+			now := time.Now()
+			if lastFile != now.Format(loggerByDayFormat) {
 				go func(name string) {
 					if e := loggers.Close(name); e != nil {
 						fmt.Println("writer.Close error", e.Error(), "File", name)
 					}
 				}(lastFile)
 
-				lastFile = time.Now().Format(loggerByDayFormat)
+				lastFile = now.Format(loggerByDayFormat)
 				LoggerByDay = GetLogger(lastFile)
 			}
-			time.Sleep(SleepToEarlyMorningTime())
+			time.Sleep(ToEarlyMorningTimeDuration(now))
 		}
 	}()
 

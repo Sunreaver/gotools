@@ -122,9 +122,8 @@ func exists(path string) error {
 	return err
 }
 
-// SleepToEarlyMorningTime will 计算睡眠到第二日凌晨的时间
-func SleepToEarlyMorningTime() time.Duration {
-	now := time.Now()
+// ToEarlyMorningTimeDuration will 计算当前到第二日凌晨的时间
+func ToEarlyMorningTimeDuration(now time.Time) time.Duration {
 	hour := 24 - now.Hour() - 1
 	minute := 60 - now.Minute() - 1
 	second := 60 - now.Second()

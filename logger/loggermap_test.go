@@ -8,7 +8,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-func TestSleepToEarlyMorningTime(t *testing.T) {
+func TestToEarlyMorningTimeDuration(t *testing.T) {
 	Convey("TestsleepTime", t, func() {
 		Convey("10:10:10 ==> 13h49m50s", func() {
 			guard := Patch(time.Now, func() time.Time {
@@ -17,7 +17,7 @@ func TestSleepToEarlyMorningTime(t *testing.T) {
 
 			defer guard.Unpatch()
 
-			du := SleepToEarlyMorningTime()
+			du := ToEarlyMorningTimeDuration(time.Now())
 			So(du, ShouldEqual, (13*3600+49*60+50)*time.Second)
 		})
 
@@ -28,7 +28,7 @@ func TestSleepToEarlyMorningTime(t *testing.T) {
 
 			defer guard.Unpatch()
 
-			du := SleepToEarlyMorningTime()
+			du := ToEarlyMorningTimeDuration(time.Now())
 			So(du, ShouldEqual, (24*3600+0*60+0)*time.Second)
 		})
 
@@ -39,7 +39,7 @@ func TestSleepToEarlyMorningTime(t *testing.T) {
 
 			defer guard.Unpatch()
 
-			du := SleepToEarlyMorningTime()
+			du := ToEarlyMorningTimeDuration(time.Now())
 			So(du, ShouldEqual, (23*3600+59*60+59)*time.Second)
 		})
 	})
