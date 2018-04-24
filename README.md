@@ -11,7 +11,6 @@ golang小工具
 
 通过秘钥，获取google两步验证的6位验证码
 
->由于不知为何，golang系统库的base32计算出的秘钥base32 decode位数总是不对，所以自己做了个[base32.Decode](http://github.com/sunreaver/goTools/base32)
 
 ```
 // MakeAuth 获取key&t对应的验证码

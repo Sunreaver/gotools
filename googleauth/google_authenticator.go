@@ -3,24 +3,21 @@ package googleauth
 import (
 	"crypto/hmac"
 	"crypto/sha1"
+	"encoding/base32"
 	"encoding/binary"
-	"errors"
 	"fmt"
 	"time"
-
-	b32 "github.com/sunreaver/goTools/base32"
 )
 
 // MakeGoogleAuthenticator 获取key&t对应的验证码
 // key 秘钥
 // t 1970年的秒
 func MakeGoogleAuthenticator(key string, t int64) (string, error) {
-	hs := hmacSha1(key, t/30)
-	if hs == nil {
-		return "", errors.New("输入有误")
+	hs, e := hmacSha1(key, t/30)
+	if e != nil {
+		return "", e
 	}
 	snum := lastBit4byte(hs)
-	fmt.Println("snum = ", snum)
 	d := snum % 1000000
 	return fmt.Sprintf("%06d", d), nil
 }
@@ -39,11 +36,11 @@ func lastBit4byte(hmacSha1 []byte) int32 {
 	return (p & 0x7fffffff)
 }
 
-func hmacSha1(key string, t int64) []byte {
-	decodeKey := b32.Decode(key)
-	// fmt.Println(decodeKey)
-	// de, _ := base32.StdEncoding.DecodeString(key)
-	// fmt.Println(de)
+func hmacSha1(key string, t int64) ([]byte, error) {
+	decodeKey, err := base32.StdEncoding.DecodeString(key)
+	if err != nil {
+		return nil, err
+	}
 
 	cData := make([]byte, 8)
 	binary.BigEndian.PutUint64(cData, uint64(t))
@@ -51,7 +48,7 @@ func hmacSha1(key string, t int64) []byte {
 	h1 := hmac.New(sha1.New, decodeKey)
 	_, e := h1.Write(cData)
 	if e != nil {
-		return nil
+		return nil, e
 	}
-	return h1.Sum(nil)
+	return h1.Sum(nil), nil
 }
