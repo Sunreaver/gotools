@@ -16,7 +16,7 @@ golang小工具
 ```
 // MakeAuth 获取key&t对应的验证码
 // key 秘钥
-// t 1970年的秒
+// t unix时间戳/秒
 func MakeAuth(key string, t int64) (string, error);
 
 
