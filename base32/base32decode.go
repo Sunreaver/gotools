@@ -1,6 +1,5 @@
 // Package base32 google两步验证中用到的basedecode
 //
-
 package base32
 
 import "strings"
@@ -10,14 +9,14 @@ var (
 	paddingTable   = []uint{0, 6, 4, 3, 1}
 	decodingTable  = []byte{}
 	padding        = byte('=')
-	null_encode    = byte(0xff)
+	nullEncode     = byte(0xff)
 )
 
 func init() {
 	decodingTable = make([]byte, 256)
 
 	for index := 0; index < len(decodingTable); index++ {
-		decodingTable[index] = null_encode
+		decodingTable[index] = nullEncode
 	}
 
 	lowEncodeTable := strings.ToLower(encodeingTable)
@@ -29,6 +28,9 @@ func init() {
 	decodingTable[padding] = 0
 }
 
+// Decode 将key编码为base32并返回
+// key 待编码字符串
+// return 编码后的值
 func Decode(key string) []byte {
 	paddingAdjustment := []int{0, 1, 1, 1, 2, 3, 3, 4}
 	key = strings.Replace(key, string(padding), "", -1)
@@ -62,7 +64,7 @@ func Decode(key string) []byte {
 			break
 		}
 		c = decodingTable[c]
-		if c == null_encode {
+		if c == nullEncode {
 			continue
 		}
 		encodedBlock[encodedBlockIndex] = c
