@@ -11,10 +11,10 @@ import (
 func TestGet(t *testing.T) {
 	Convey("TestGet", t, func() {
 		Convey("Get Baidu", func() {
-			data, code, e := Get("http://www.baidu.com/robots.txt")
-			So(string(data), ShouldContainSubstring, "User-agent: Googlebot")
+			resp, e := Get("http://www.baidu.com/robots.txt")
 			So(e, ShouldBeNil)
-			So(code, ShouldEqual, http.StatusOK)
+			So(string(resp.GetContent()), ShouldContainSubstring, "User-agent: Googlebot")
+			So(resp.GetStatusCode(), ShouldEqual, http.StatusOK)
 		})
 	})
 }
@@ -22,10 +22,13 @@ func TestGet(t *testing.T) {
 func TestPost(t *testing.T) {
 	Convey("TestPost", t, func() {
 		Convey("Post Baidu", func() {
-			data, code, e := Post("http://www.baidu.com/robots.txt", "application/json", strings.NewReader("abc"))
-			So(string(data), ShouldContainSubstring, "User-agent: Googlebot")
+			resp, e := Post("http://www.baidu.com/robots.txt",
+				map[string]string{"Content-Type": "application/json"},
+				strings.NewReader("abc"))
+
 			So(e, ShouldBeNil)
-			So(code, ShouldEqual, http.StatusOK)
+			So(string(resp.GetContent()), ShouldContainSubstring, "User-agent: Googlebot")
+			So(resp.GetStatusCode(), ShouldEqual, http.StatusOK)
 		})
 	})
 }
