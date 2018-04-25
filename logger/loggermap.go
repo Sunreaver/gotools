@@ -73,34 +73,35 @@ func (l *loggerMap) Get(name string) *zap.SugaredLogger {
 	l.lock.RUnlock()
 
 	if !ok {
+		writer := &lumberjack.Logger{
+			Filename: path.Join(directory, name),
+			MaxSize:  1024,
+		}
+		ws := zapcore.AddSync(writer)
+		cfg := zapcore.EncoderConfig{
+			TimeKey:        "time",
+			LevelKey:       "level",
+			NameKey:        "logger",
+			CallerKey:      "caller",
+			MessageKey:     "message",
+			StacktraceKey:  "stacktrace",
+			EncodeLevel:    zapcore.LowercaseLevelEncoder,
+			EncodeTime:     localTimeEncoder,
+			EncodeDuration: zapcore.NanosDurationEncoder,
+		}
+		logger := zap.New(zapcore.NewCore(
+			zapcore.NewJSONEncoder(cfg),
+			ws,
+			level,
+		))
+		i = instance{
+			logger: logger.Sugar(),
+			writer: writer,
+		}
+
 		l.lock.Lock()
 		i, ok = l.instances[name]
 		if !ok {
-			writer := &lumberjack.Logger{
-				Filename: path.Join(directory, name),
-				MaxSize:  1024,
-			}
-			ws := zapcore.AddSync(writer)
-			cfg := zapcore.EncoderConfig{
-				TimeKey:        "time",
-				LevelKey:       "level",
-				NameKey:        "logger",
-				CallerKey:      "caller",
-				MessageKey:     "message",
-				StacktraceKey:  "stacktrace",
-				EncodeLevel:    zapcore.LowercaseLevelEncoder,
-				EncodeTime:     localTimeEncoder,
-				EncodeDuration: zapcore.NanosDurationEncoder,
-			}
-			logger := zap.New(zapcore.NewCore(
-				zapcore.NewJSONEncoder(cfg),
-				ws,
-				level,
-			))
-			i = instance{
-				logger: logger.Sugar(),
-				writer: writer,
-			}
 			l.instances[name] = i
 		}
 		l.lock.Unlock()
