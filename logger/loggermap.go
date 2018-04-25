@@ -1,8 +1,6 @@
 package logger
 
 import (
-	"errors"
-	"os"
 	"path"
 	"sync"
 	"time"
@@ -14,7 +12,7 @@ import (
 )
 
 type instance struct {
-	logger *zap.SugaredLogger
+	logger *zap.Logger
 	writer *lumberjack.Logger
 }
 
@@ -67,7 +65,7 @@ func (l *loggerMap) Close(name string) error {
 	return nil
 }
 
-func (l *loggerMap) Get(name string) *zap.SugaredLogger {
+func (l *loggerMap) Get(name string) *zap.Logger {
 	l.lock.RLock()
 	i, ok := l.instances[name]
 	l.lock.RUnlock()
@@ -95,32 +93,19 @@ func (l *loggerMap) Get(name string) *zap.SugaredLogger {
 			level,
 		))
 		i = instance{
-			logger: logger.Sugar(),
+			logger: logger,
 			writer: writer,
 		}
 
 		l.lock.Lock()
-		i, ok = l.instances[name]
-		if !ok {
+		if tmp, ok := l.instances[name]; !ok {
 			l.instances[name] = i
+		} else {
+			i = tmp
 		}
 		l.lock.Unlock()
 	}
 	return i.logger
-}
-
-func exists(path string) error {
-	stat, err := os.Stat(path)
-	if err == nil {
-		return nil
-	}
-	if os.IsNotExist(err) {
-		return errors.New("path is not exists: " + path)
-	}
-	if !stat.IsDir() {
-		return errors.New("path is not directory: " + path)
-	}
-	return err
 }
 
 // ToEarlyMorningTimeDuration will 计算当前到第二日凌晨的时间

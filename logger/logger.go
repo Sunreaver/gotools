@@ -1,7 +1,9 @@
 package logger
 
 import (
+	"errors"
 	"fmt"
+	"os"
 	"time"
 
 	"go.uber.org/zap"
@@ -26,7 +28,7 @@ func InitLogger(path string, l Level, location *time.Location) error {
 	}
 
 	lastFile := time.Now().Format(loggerByDayFormat)
-	LoggerByDay = GetLogger(lastFile)
+	LoggerByDay = GetSugarLogger(lastFile)
 	go func() {
 		for {
 			now := time.Now()
@@ -38,7 +40,7 @@ func InitLogger(path string, l Level, location *time.Location) error {
 				}(lastFile)
 
 				lastFile = now.Format(loggerByDayFormat)
-				LoggerByDay = GetLogger(lastFile)
+				LoggerByDay = GetSugarLogger(lastFile)
 			}
 			time.Sleep(ToEarlyMorningTimeDuration(now))
 		}
@@ -48,11 +50,30 @@ func InitLogger(path string, l Level, location *time.Location) error {
 }
 
 // GetLogger to get logger
-func GetLogger(name string) *zap.SugaredLogger {
+func GetLogger(name string) *zap.Logger {
 	return loggers.Get(name)
+}
+
+// GetSugarLogger to get SugaredLogger
+func GetSugarLogger(name string) *zap.SugaredLogger {
+	return GetLogger(name).Sugar()
 }
 
 // FlushAndCloseLogger flush and close logger
 func FlushAndCloseLogger(name string) error {
 	return loggers.Close(name)
+}
+
+func exists(path string) error {
+	stat, err := os.Stat(path)
+	if err == nil {
+		return nil
+	} else if os.IsNotExist(err) {
+		return errors.New("path is not exists: " + path)
+	} else if stat != nil && !stat.IsDir() {
+		return errors.New("path is not directory: " + path)
+	} else if stat == nil {
+		return errors.New("not directory: " + path)
+	}
+	return err
 }

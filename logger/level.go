@@ -6,12 +6,12 @@ import "go.uber.org/zap/zapcore"
 type Level int8
 
 const (
-	// DebugLevel 最低输出debug级别.
+	// DebugLevel 输出debug、info、warn、error级别.
 	// 开发中用.
 	DebugLevel Level = iota - 1
-	// InfoLevel 最低输出InfoLevel级别.
+	// InfoLevel 输出info、warn、error级别.
 	InfoLevel
-	// WarnLevel 最低输出WarnLevel级别.
+	// WarnLevel 输出warn、error级别.
 	WarnLevel
 )
 
