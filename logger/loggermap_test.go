@@ -1,12 +1,31 @@
 package logger
 
 import (
+	"math/rand"
+	"strconv"
 	"testing"
 	"time"
 
 	. "github.com/bouk/monkey"
 	. "github.com/smartystreets/goconvey/convey"
 )
+
+func TestMain(t *testing.T) {
+	Convey("TestMain", t, func() {
+		Convey("test exists", func() {
+			e := exists("/usr")
+			So(e, ShouldBeNil)
+
+			randDir := ""
+			for i := 0; i < 10; i++ {
+				randDir += strconv.Itoa(rand.Int() + 1000000)
+			}
+			e = exists(randDir)
+			So(e, ShouldBeError)
+		})
+	})
+
+}
 
 func TestToEarlyMorningTimeDuration(t *testing.T) {
 	Convey("TestsleepTime", t, func() {

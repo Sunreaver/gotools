@@ -1,12 +1,12 @@
 package logger
 
 import (
+	"errors"
 	"os"
 	"path"
 	"sync"
 	"time"
 
-	"github.com/pkg/errors"
 	lumberjack "gopkg.in/natefinch/lumberjack.v2"
 
 	"go.uber.org/zap"
@@ -77,7 +77,7 @@ func (l *loggerMap) Get(name string) *zap.SugaredLogger {
 		i, ok = l.instances[name]
 		if !ok {
 			writer := &lumberjack.Logger{
-				Filename: path.Join(directory, name+".log"),
+				Filename: path.Join(directory, name),
 				MaxSize:  1024,
 			}
 			ws := zapcore.AddSync(writer)
@@ -111,7 +111,7 @@ func (l *loggerMap) Get(name string) *zap.SugaredLogger {
 func exists(path string) error {
 	stat, err := os.Stat(path)
 	if err == nil {
-		return errors.Wrap(err, "directory")
+		return nil
 	}
 	if os.IsNotExist(err) {
 		return errors.New("path is not exists: " + path)
