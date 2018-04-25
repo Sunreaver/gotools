@@ -83,13 +83,12 @@ func Delete(uri string, header map[string]string, body io.Reader) (response *Res
 	return getRespBody(resp)
 }
 
-func getRespBody(resp *h.Response) (response *Resp, err error) {
+func getRespBody(resp *h.Response) (response *Resp, e error) {
 	if resp == nil {
 		return nil, errors.New("response is nil")
 	}
-	var content []byte
 	defer resp.Body.Close()
-	content, err = ioutil.ReadAll(resp.Body)
+	content, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		return nil, err
 	}
