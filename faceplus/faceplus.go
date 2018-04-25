@@ -6,11 +6,11 @@ import (
 	"errors"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
-	"net/http"
 	"os"
 	"strings"
+
+	"github.com/sunreaver/gotools/http"
 )
 
 // Result define FaceplusResult
@@ -147,18 +147,14 @@ func postData(name, uri string, fileData io.Reader, v *Verification) (result *Re
 	}
 	contentType := bodyWriter.FormDataContentType()
 	bodyWriter.Close()
-	resp, err := http.Post(uri, contentType, bodyBuf)
+	resp, err := http.Post(uri,
+		map[string]string{"Content-Type": contentType},
+		bodyBuf)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
-	respBody, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
 	result = &Result{}
-	if e := json.Unmarshal(respBody, result); e != nil {
+	if e := json.Unmarshal(resp.GetContent(), result); e != nil {
 		return nil, errors.New("接口返回错误")
 	} else if result.Err != "" {
 		return nil, errors.New(result.Err)
