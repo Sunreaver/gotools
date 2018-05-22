@@ -13,13 +13,13 @@ import (
 // path 输出路径
 // debugLevel 是否输出debug信息
 // location 日志文件名所属时区
-func InitLogger(path string, l Level, location *time.Location) error {
+func InitLogger(path string, logLevel Level, location *time.Location) error {
 	if e := exists(path); e != nil {
 		return e
 	}
 
 	directory = path
-	level = l.toZapcoreLevel()
+	level = logLevel.toZapcoreLevel()
 
 	// Fix time offset for Local
 	// lt := time.FixedZone("Asia/Shanghai", 8*60*60)
