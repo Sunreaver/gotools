@@ -10,10 +10,13 @@ import (
 )
 
 // InitLogger 初始化
-// path 输出路径
+// path 输出路径, 默认当前路径
 // debugLevel 是否输出debug信息
 // location 日志文件名所属时区
 func InitLogger(path string, logLevel Level, location *time.Location) error {
+	if path == "" {
+		path = "./"
+	}
 	if e := exists(path); e != nil {
 		return e
 	}
