@@ -9,20 +9,25 @@ import (
 	"go.uber.org/zap"
 )
 
-// InitLogger 初始化
-// path 输出路径, 默认当前路径
-// debugLevel 是否输出debug信息
-// location 日志文件名所属时区
-func InitLogger(path string, logLevel Level, location *time.Location) error {
-	if path == "" {
-		path = "./"
-	}
-	if e := exists(path); e != nil {
-		return e
-	}
+// Config logger config
+type Config struct {
+	Path     string
+	Loglevel LevelString
+	// MaxSize 单文件最大存储，单位MB
+	MaxSize int
+}
 
-	directory = path
-	level = logLevel.toZapcoreLevel()
+// InitLoggerWithConfig 使用config初始化logger
+func InitLoggerWithConfig(cfg Config, location *time.Location) error {
+	if cfg.Path == "" {
+		cfg.Path = "./"
+	}
+	if e := exists(cfg.Path); e != nil {
+		return e
+	} else if cfg.MaxSize <= 0 {
+		return errors.New("MaxSize must be large than zero")
+	}
+	config = cfg
 
 	// Fix time offset for Local
 	// lt := time.FixedZone("Asia/Shanghai", 8*60*60)
@@ -50,6 +55,26 @@ func InitLogger(path string, logLevel Level, location *time.Location) error {
 	}()
 
 	return nil
+}
+
+// InitLoggerWithLevel 使用String格式的level初始化logger
+// path 输出路径, 默认当前路径
+// logLevel 日志级别: debug,info,warn
+// location 日志文件名所属时区
+func InitLoggerWithLevel(path string, logLevel LevelString, location *time.Location) error {
+	return InitLogger(path, logLevel.toLevel(), location)
+}
+
+// InitLogger 初始化
+// path 输出路径, 默认当前路径
+// logLevel 日志级别
+// location 日志文件名所属时区
+func InitLogger(path string, logLevel Level, location *time.Location) error {
+	return InitLoggerWithConfig(Config{
+		Path:     path,
+		Loglevel: logLevel.toLevelString(),
+		MaxSize:  1024,
+	}, location)
 }
 
 // GetLogger to get logger

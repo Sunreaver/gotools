@@ -26,15 +26,14 @@ var (
 		new(sync.RWMutex),
 		make(map[string]instance),
 	}
-	directory string
-	level     zapcore.LevelEnabler
+	config Config
 
 	// LoggerByDay 按照天来划分的logger
 	LoggerByDay *zap.SugaredLogger
 )
 
 const (
-	loggerByDayFormat = "2006-01-02"
+	loggerByDayFormat = "2006-01-02.log"
 )
 
 func localTimeEncoder(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
@@ -72,8 +71,8 @@ func (l *loggerMap) Get(name string) *zap.Logger {
 
 	if !ok {
 		writer := &lumberjack.Logger{
-			Filename: path.Join(directory, name),
-			MaxSize:  1024,
+			Filename: path.Join(config.Path, name),
+			MaxSize:  int(config.MaxSize),
 		}
 		ws := zapcore.AddSync(writer)
 		cfg := zapcore.EncoderConfig{
@@ -90,7 +89,7 @@ func (l *loggerMap) Get(name string) *zap.Logger {
 		logger := zap.New(zapcore.NewCore(
 			zapcore.NewJSONEncoder(cfg),
 			ws,
-			level,
+			config.Loglevel.toZapcoreLevel(),
 		))
 		i = instance{
 			logger: logger,
