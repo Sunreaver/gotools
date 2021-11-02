@@ -37,7 +37,7 @@ func lastBit4byte(hmacSha1 []byte) int32 {
 }
 
 func hmacSha1(key string, t int64) ([]byte, error) {
-	decodeKey, err := base32.StdEncoding.DecodeString(key)
+	decodeKey, err := base32.StdEncoding.WithPadding(base32.NoPadding).DecodeString(key)
 	if err != nil {
 		return nil, err
 	}
